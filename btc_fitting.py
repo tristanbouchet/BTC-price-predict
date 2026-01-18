@@ -130,11 +130,11 @@ def fit_PL_loglog(df, quantile=0.1, date_fit_start=None, date_fit_end=None, yaxi
     return qr, result_support, result_all
 
 def extrapolate_PL(yaxis, best_PL, support_PL, btc_price, day_extra, date_fit_start, date_fit_end, m2_growth_rate, btc_halving_daygen, 
-                   halving_mean_duration, loglogplot=0, plot_price=True):
+                   halving_mean_duration, loglogplot=0, plot_price=True, N_plot=500):
     '''extrapolate the simple PL models (support and entire dataset)
     plots the result with real dates and prices
     '''
-    xplot = np.linspace(date_to_daygen(date_fit_start, genesis_block_date), date_to_daygen(date_fit_end, genesis_block_date) + day_extra, 100)
+    xplot = np.linspace(date_to_daygen(date_fit_start, genesis_block_date), date_to_daygen(date_fit_end, genesis_block_date) + day_extra, N_plot)
     dateplot = genesis_block_date + np.timedelta64(1,'D') * xplot # for the semi-log plot
     # To do: combine support/best
     df_best = pd.DataFrame({'Date':dateplot, 'DAY_GEN':xplot, yaxis:best_PL.eval(xplot)})
