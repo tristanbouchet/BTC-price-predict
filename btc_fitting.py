@@ -286,7 +286,7 @@ def find_support_current_price(df, support_PL):
     '''find the date where the support is equal current price
     this indicate the maximal date at which to expect positive returns
     '''
-    curr_price, curr_date = df.iloc[-1].Price, df.iloc[-1].name
+    curr_price, curr_date = df.iloc[-1].Price_GEN, df.iloc[-1].name
     curr_price_support_gen = (curr_price/support_PL.amplitude)**(1/support_PL.exponent)
     curr_price_support_date = genesis_block_date + np.timedelta64(1,'D') * curr_price_support_gen
     print(f'Current price of $ {curr_price:.0f} is the support of {curr_price_support_date}, in {curr_price_support_date-df.index[-1]:}')
