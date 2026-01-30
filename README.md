@@ -22,14 +22,14 @@ First, the price during cycles is normalized by the PL support:
 ```math
 r = P/S - 1
 ```
-The shape of this ratio is erratic, and chosen empirically as a [Lorentzian](https://en.wikipedia.org/wiki/Cauchy_distribution) function. The change in BTC creation decrease [geometricaly](https://en.wikipedia.org/wiki/Geometric_progression) every halving, so the amplitude is assumed to decrease geometrically as well.
+The shape of this ratio is erratic, and chosen empirically as a periodic [Lorentzian](https://en.wikipedia.org/wiki/Cauchy_distribution) function. The change in BTC creation decrease [geometricaly](https://en.wikipedia.org/wiki/Geometric_progression) every halving, so the amplitude is assumed to decrease geometrically as well.
 ```math
-r(t) = A_k *  Lorentzian(x = t; x_0 = d, \gamma = \sigma_c) + C
+r(t) = A_k *  Lorentzian(x = t; x_0 = t_k - d, \gamma = \sigma_c) + C
 ```
 
 where $A_k = A_0 * \mu^k$, with $A_0$: initial cycle amplitude, $\mu$: the decay factor, $k$: halving number.
 
-$d$: the delay between halving start and cycle peak, $\sigma_c$: width of the cycle, i.e. the average duration of bull-runs.
+$t_k$: the halving starting dates, $d$: the delay between halving start and cycle peak, $\sigma_c$: width of the cycle, i.e. the average duration of bull-runs.
 
 An offset $C$ is also added to adjust the support.
 
