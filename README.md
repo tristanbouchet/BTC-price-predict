@@ -24,7 +24,7 @@ r = P/S - 1
 ```
 The shape of this ratio is erratic, and chosen empirically as a periodic [Lorentzian](https://en.wikipedia.org/wiki/Cauchy_distribution) function. The change in BTC creation decrease [geometricaly](https://en.wikipedia.org/wiki/Geometric_progression) every halving, so the amplitude is assumed to decrease geometrically as well.
 ```math
-r(t) = A_k *  Lorentzian(x = t; x_0 = t_k - d, \gamma = \sigma_c) + C
+r(t) = A_k *  Lorentzian(x = t; x_0 = t_k + d, \gamma = \sigma_c) + C
 ```
 
 where $A_k = A_0 * \mu^k$, with $A_0$: initial cycle amplitude, $\mu$: the decay factor, $k$: halving number.
