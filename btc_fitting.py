@@ -13,6 +13,7 @@ from sklearn.linear_model import QuantileRegressor, LinearRegression
 genesis_block_date = np.datetime64('2009-01-03')
 btc_halving_dates=['2012-11-28','2016-07-09','2020-05-11','2024-04-19','2028-04-17'] # 2028 is predicted
 avg_days_per_year = 365.25
+reward_init = 50 # initial number of BTC in block reward
 
 def date_to_daygen(date, genesis_block_date):
     '''convert a date into the number of days after the first BTC block, aka genesis block'''
@@ -21,6 +22,9 @@ def date_to_daygen(date, genesis_block_date):
 def daygen_to_date(daygen, genesis_block_date):
     '''convert a date into the number of days after the first BTC block, aka genesis block'''
     return daygen + genesis_block_date
+
+def get_reward(x, r0):
+    return r0 * (1/2)**(x.k_cycle + 1)
 
 def adjust_inflation_since_gen(x, m2_growth_rate):
     '''adjust price to genesis block prices by taking into account money supply growth'''
@@ -257,6 +261,32 @@ def extrapolate_cycle(yaxis, result_cycle, support_PL, btc_price, df_best, df_su
         ax.format_coord = format_coord
     return df_best
 
+def extrapolate_reward(df_best, btc_price, df_support, btc_all_halving, plot_reward_usd=True):
+    df_best['reward_btc'] = df_best.apply(get_reward, args=(reward_init,), axis=1)
+    df_best['reward_price'] = df_best['reward_btc'] * df_best['Price']
+    df_best['reward_cycle'] = df_best['reward_btc'] * df_best['Price_cycle']
+
+    df_support['k_cycle'] = df_support.apply(find_cycle_k, axis=1, args=[btc_all_halving])
+    df_support['reward_btc'] = df_support.apply(get_reward, args=(reward_init,), axis=1)
+    df_support['reward_price'] = df_support['reward_btc'] * df_support['Price']
+
+    btc_price['k_cycle'] = btc_price.apply(find_cycle_k, axis=1, args=[btc_all_halving])
+    btc_price['reward_btc'] = btc_price.apply(get_reward, args=(reward_init,), axis=1)
+    btc_price['reward_price'] = btc_price['reward_btc'] * btc_price['Price']
+
+    if plot_reward_usd:
+        fig, ax=plt.subplots(figsize=(11,6))
+        ax.plot(btc_price.index, btc_price['reward_price'], 'k', alpha=.8, label='Data')
+        ax.plot('Date', 'reward_cycle' ,'blue', alpha=.7, linewidth=2.5, label='Cycle fit', data=df_best)
+        ax.plot('Date', 'reward_price', 'r--', alpha=.8, label='Support', data=df_support)
+        for halving_date in btc_halving_dates: ax.axvline(np.datetime64(halving_date),color='grey',linestyle='--',alpha=.6)
+        # ax.axvspan(start_cycle_fit, end_cycle_fit, color='green', alpha=.15, label='Fitting region')
+        ax.set_yscale('log')
+        ax.set_xlabel('Date')#;ax.set_ylabel('Price (USD)')
+        ax.legend();ax.grid(alpha=.5)
+        ax.yaxis.set_major_formatter(FuncFormatter(fmt_log_price))
+        ax.format_coord = format_coord
+    return df_best, df_support, btc_price
 
 ################ Plotting fct ################
 
